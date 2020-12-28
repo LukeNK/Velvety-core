@@ -1,0 +1,1 @@
+// The core which send data to clients (display)
