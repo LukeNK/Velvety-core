@@ -1,0 +1,10 @@
+{
+    "console": {
+        "dir": "./",
+        "app": "./lib/app.capatain/app.captain.html"
+    },
+    "display": {
+        "env": "",
+        "root": ""
+    }
+}
