@@ -17,6 +17,12 @@
             font-family: 'Courier New', Courier, monospace;
         }
         
+        p {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            color: chartreuse;
+        }
+        
         .inputBoxLable {
             background-color: #03dac5;
             padding-left: 10px;
@@ -56,20 +62,43 @@
 
 <script src="/lib/sys.fs.js"></script>
 <script>
+    let appAuth = [];
+    let appFS;
+    let appCurrentDirectory = '/';
+
     let lineCount = 0;
-
-    function logIn() {
-        let consonleFSStream = new fs('velvety', 'velvety', 'sys.fs')
-
-    }
-
     let newInput;
     let inputBox = document.getElementById('inputBox' + lineCount);
 
+    function outText(text) {
+        // Output stream
+        let newP = document.getElementById('mainScreen').appendChild(document.createElement('p'))
+        newP.textContent = text;
+    }
+
     function runCMD() {
         if (event.key === 'Enter') {
-            console.log('Enter ' + inputBox.value);
+            if (lineCount == 0) {
+                appAuth[0] = inputBox.value
+            } else if (lineCount == 1) {
+                appAuth[1] = inputBox.value;
+                appFS = new fs(appAuth[0], appAuth[1], 'captainKey', false);
+
+                if ("captainKey" in FSSTREAMS && FSSTREAMS['captainKey'] == true) {
+                    let newLable = document.getElementById('mainScreen').appendChild(document.createElement('lable'))
+                    newLable.classList.add("inputBoxLable")
+                    newLable.textContent = `[${appAuth[0]}@ ${appCurrentDirectory}]`
+                } else {
+                    outText("Athentication failed")
+                    document.getElementById('inputBox0').remove()
+                    document.getElementById('inputBox1').remove()
+                    lineCount = -1;
+                }
+            }
             // document.getElementById('inputBox' + lineCount).remove()
+            if (lineCount != -1) {
+                interpreterCMD(document.getElementById('inputBox' + lineCount).value)
+            }
 
             // New line
             lineCount += 1;

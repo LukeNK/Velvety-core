@@ -1,2 +1,4 @@
 node_modules/
-var/session/log
+
+var/session
+!var/session/ID

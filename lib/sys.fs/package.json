@@ -1,0 +1,15 @@
+{
+    "name": "sys.fs",
+    "version": "1.0.0",
+    "description": "FileSystem access for clients (include authencation, read write files and system call)",
+    "main": "sys.fs.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "fs",
+        "auth"
+    ],
+    "author": "Luke Nguyen Khanh",
+    "license": "MIT"
+}

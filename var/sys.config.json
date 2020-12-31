@@ -1,10 +1,18 @@
 {
     "console": {
         "dir": "./",
-        "app": "./lib/app.capatain/app.captain.html"
+        "app": "./lib/app.captain/app.captain.html"
     },
     "display": {
-        "env": "",
+        "wm": "",
+        "dm": "",
         "root": ""
+    },
+    "serverjs": {
+        "port": 3000
+    },
+    "auth": {
+        "ID": "velvety",
+        "pass": "velvety"
     }
 }

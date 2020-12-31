@@ -1,0 +1,11 @@
+{
+  "name": "wm.pilot",
+  "version": "1.0.0",
+  "description": "Windows manager for Velvety",
+  "main": "wm.pilot.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luke Nguyen Khanh",
+  "license": "MIT"
+}
