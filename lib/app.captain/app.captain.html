@@ -1,21 +1,90 @@
+<!DOCTYPE html>
+<html>
+
 <head>
     <title>Captain console</title>
+
+    <meta charset="utf-8">
+
     <style>
         body {
-            color: #14ffec;
-            background-color: #212121;
+            color: #000000;
+            background-color: #121212;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .inputBoxLable {
+            background-color: #03dac5;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+        
+        .inputBox {
+            width: 100%;
+            margin-top: 0px;
+            padding-left: 0%;
+            padding-right: 0%;
+            outline: none;
+            border-top: 0px solid gray;
+            border-bottom: 0px solid gray;
+            border-left: #121212;
+            border-right: #121212;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .inputBox:focus {
+            border-top: 1px solid gray;
+            border-bottom: 1px solid gray;
         }
     </style>
 </head>
 
 <body>
-    <input type="text" name="consoleInput" placeholder="" id="searchBox" />
+    <div id="mainScreen">
+        <label id="inputBoxLable0" class="inputBoxLable">Login</label>
+        <input type="text" name="consoleInput" placeholder="username" id="inputBox0" class="inputBox" onkeydown="runCMD()" autofocus/>
+    </div>
 </body>
 
+<script src="/lib/sys.fs.js"></script>
 <script>
-    searchBox.addEventListener("keyup", function(event) {
-        if (event.key === 'Enter') {
+    let lineCount = 0;
 
+    function logIn() {
+        let consonleFSStream = new fs('velvety', 'velvety', 'sys.fs')
+
+    }
+
+    let newInput;
+    let inputBox = document.getElementById('inputBox' + lineCount);
+
+    function runCMD() {
+        if (event.key === 'Enter') {
+            console.log('Enter ' + inputBox.value);
+            // document.getElementById('inputBox' + lineCount).remove()
+
+            // New line
+            lineCount += 1;
+            newInput = document.getElementById('mainScreen').appendChild(document.createElement('input'))
+            newInput.setAttribute("id", 'inputBox' + (lineCount));
+            newInput.classList.add("inputBox")
+            newInput.autofocus = true;
+            newInput.setAttribute("onkeydown", "runCMD()");
+            (lineCount == 1) ? newInput.placeholder = 'Password': {};
+            newInput.focus();
+
+            // Update event listener to new input
+            inputBox = document.getElementById('inputBox' + lineCount);
         }
-    })
+    }
 </script>
+
+</html>
