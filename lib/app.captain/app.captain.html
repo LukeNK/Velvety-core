@@ -8,8 +8,8 @@
 
     <style>
         body {
-            color: #000000;
-            background-color: #121212;
+            color: #fcfafaff;
+            background-color: #303633ff;
             margin-left: 0px;
             margin-right: 0px;
             margin-top: 0px;
@@ -20,11 +20,11 @@
         p {
             margin-top: 0px;
             margin-bottom: 0px;
-            color: chartreuse;
+            color: #20bf55ff;
         }
         
         .inputBoxLable {
-            background-color: #03dac5;
+            background-color: #42cafdff;
             padding-left: 10px;
             padding-right: 10px;
             padding-top: 0px;
@@ -39,10 +39,10 @@
             outline: none;
             border-top: 0px solid gray;
             border-bottom: 0px solid gray;
-            border-left: #121212;
-            border-right: #121212;
-            background-color: #121212;
-            color: #ffffff;
+            border-left: #303633ff;
+            border-right: #303633ff;
+            background-color: #303633ff;
+            color: #fcfafaff;
             font-family: 'Courier New', Courier, monospace;
         }
         
@@ -84,6 +84,8 @@
                 appAuth[1] = inputBox.value;
                 appFS = new fs(appAuth[0], appAuth[1], 'captainKey', false);
 
+                appAuth[2] = appFS.getLock();
+
                 if ("captainKey" in FSSTREAMS && FSSTREAMS['captainKey'] == true) {
                     let newLable = document.getElementById('mainScreen').appendChild(document.createElement('lable'))
                     newLable.classList.add("inputBoxLable")
@@ -96,7 +98,7 @@
                 }
             }
             // document.getElementById('inputBox' + lineCount).remove()
-            if (lineCount != -1) {
+            if (lineCount > 1) {
                 interpreterCMD(document.getElementById('inputBox' + lineCount).value)
             }
 
@@ -112,6 +114,13 @@
 
             // Update event listener to new input
             inputBox = document.getElementById('inputBox' + lineCount);
+        }
+    }
+
+    function interpreterCMD(cmd) {
+        cmd = cmd.split(' ')
+        if (cmd[0] == 'wm') {
+            window.location.replace(`/lib/wm.${cmd[1]}`)
         }
     }
 </script>

@@ -4,7 +4,7 @@
         "app": "./lib/app.captain/app.captain.html"
     },
     "display": {
-        "wm": "",
+        "wm": "./lib/wm.pilot/wm.pilot.html",
         "dm": "",
         "root": ""
     },
