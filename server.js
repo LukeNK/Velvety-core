@@ -1,11 +1,18 @@
 // The core which send data to clients (display)
 const express = require('express')
 const app = express();
+const bodyParser = require('body-parser')
+const jsonParser = bodyParser.json()
 const fs = require('fs');
 const path = require('path');
 
 let SYSCONFIG; // Will init at readVar1();
 let SYSMODULES; // Will init at readVar2();
+
+// app config
+app.set({
+    'Content-Type': 'text/html'
+});
 
 function debugLog(lv, location, message) {
     let res;
@@ -42,13 +49,13 @@ function debugLog(lv, location, message) {
 
     function fileLog() {
         if (lv == 'CRIT' || lv == 'MESS') { console.log(res) } else if (lv == 'STOP') { process.kill(process.pid) }
-        fs.appendFile('./var/session/log', res + '\n', function(err) {
+        fs.appendFile('./var/session/log', res + '\n', (err) => {
             if (err) { debugLog('CRIT', 'node.js', err) }
         });
         if (location) {
             location = location.replace(/ /g, "");
             location = location.replace(/\//g, "");
-            fs.appendFile(`./var/session/${location}-log`, res + '\n', function(err) {
+            fs.appendFile(`./var/session/${location}-log`, res + '\n', (err) => {
                 if (err) { debugLog('CRIT', 'node.js', err) }
             });
         }
@@ -73,17 +80,17 @@ function readVar1() {
     let tempID = Math.floor(Math.random() * 9999) + 1;
     tempID = tempID.toString();
 
-    fs.writeFile('./var/session/ID', tempID, function(err) {
+    fs.writeFile('./var/session/ID', tempID, (err) => {
         if (err) { debugLog('CRIT', 'server.readVar1', 'Cannot create session ID: ' + tempID + `\n------ ${err}`) }
         debugLog('INFO', 'server.readVar1', `Session ID generated: ${tempID}`)
     })
     try {
-        SYSCONFIG = require('./var/sys.config')
+        SYSCONFIG = require('./etc/sys.config')
     } catch (err) {
         debugLog('CRIT', 'node.js', err)
         debugLog('CRIT', 'server.readVar1', 'Cannot find system config file, regenerate default setting');
         const recover = require('./lib/sys.recover/sys.recover')
-        recover.configRecovery('./var/sys.config');
+        recover.configRecovery('./etc/sys.config');
     }
     readVar2();
 }
@@ -101,44 +108,52 @@ function startUpCompleted() {
         let rootWindows;
         rootWindows = SYSCONFIG.display.root;
         if (rootWindows == '') { rootWindows = SYSCONFIG.console.app };
-        fs.readFile(rootWindows, "utf8", function(err, data) {
+        fs.readFile(rootWindows, "utf8", (err, data) => {
             if (err) { res.send('Cannot load basic root windows because\n' + err); return }
-            res.set({
-                'Content-Type': 'text/html',
-            })
+            res.set({ 'Content-Type': 'text/html' })
             res.send(data);
         })
     })
 
-    app.get('/lib/:name', function(req, res) {
+    app.get('/lib/:name', (req, res) => {
         // Only to serve excutable or defined file
         // Please use /lib/file to get your library's directory files
         let name = req.params.name;
         let startupPath; // The excutable location
+        let startupData; // Relative location to the /lib/${libName}
         if (name.includes('.js')) {
             startupPath = `lib/${name.slice(0, name.length-3)}/${name}`
         } else if (name.includes('.html')) {
             startupPath = `lib/${name.slice(0, name.length-5)}/${name}`
         } else {
-            let metaData = require(`./lib/${name}/package`)
-            let startupData = metaData.main;
-            startupPath = `lib/${name}/${startupData}`;
+            try {
+                let metaData = require(`./lib/${name}/package`)
+                startupData = metaData.main;
+                startupPath = `lib/${name}/${startupData}`;
+            } catch (err) {
+                debugLog('CRIT', 'GET /lib', err);
+            }
         }
 
-        fs.readFile(startupPath, "utf8", function(err, data) {
-            if (err) {
-                debugLog('CRIT', 'GET /lib', err);
-                res.send(err);
-            } else {
-                res.send(data);
-                debugLog('INFO', 'GET /lib', `${startupPath} Served`)
-            }
-        })
+        if (SYSMODULES.isValidHttpUrl(startupData)) {
+            debugLog('INFO', 'GET /lib', 'Redirect to ' + startupData)
+            res.redirect(startupData);
+        } else {
+            fs.readFile(startupPath, "utf8", (err, data) => {
+                if (err) {
+                    debugLog('CRIT', 'GET /lib', err);
+                    res.send(err);
+                } else {
+                    res.send(data);
+                    debugLog('INFO', 'GET /lib', `${startupPath} Served`)
+                }
+            })
+        }
     })
 
     app.use('/lib/file', express.static('lib'))
 
-    app.get('/fs', function(req, res) {
+    app.get('/fs', (req, res) => {
         let type = req.query.type;
         let authID = req.query.id;
         let authPass = req.query.pass;
@@ -155,7 +170,7 @@ function startUpCompleted() {
 
         function fsCheckRespond() {
             if (type == 'create' || type == 'getLock') {
-                SYSMODULES.createLock(key, function(err, lock) {
+                SYSMODULES.createLock(key, (err, lock) => {
                     if (!err) {
                         res.send(lock);
                     } else { res.send(err) }
@@ -164,11 +179,14 @@ function startUpCompleted() {
         }
     })
 
-    app.post('/fs', function(req, res) {
+    app.post('/fs', jsonParser, (req, res) => {
+        //console.log(req.body)
         let path = req.body.path;
         let data = req.body.data;
         let key = req.body.key;
         let lock = req.body.lock;
+        let type = req.body.type;
+        debugLog('INFO', 'POST /fs', `${type} @ ${path} with key ${key}`)
 
         SYSMODULES.verifyLock(key, lock, function(result) {
             if (!result) {
@@ -177,13 +195,13 @@ function startUpCompleted() {
             } else {
                 switch (type) {
                     case 'writeFile':
-                        fs.writeFile(path, data, 'utf8', function(err) {
-                            if (err) { res.json({ err, data }) } { res.send('') }
+                        fs.writeFile(path, data, 'utf8', (err) => {
+                            if (err) { res.send(err) } { res.send('') }
                         })
                         break;
                     case 'readFile':
-                        fs.readFile(path, 'utf8', function(err, data) {
-                            res.json({ e: err, d: data })
+                        fs.readFile(path, 'utf8', (err, data) => {
+                            if (!err) { res.send(data) } else { res.send('err ' + err) }
                         })
                         break;
                     default:
@@ -193,7 +211,46 @@ function startUpCompleted() {
         })
     })
 
-    app.get('/run/:path', function(req, res) {
+    app.post('/syscall', jsonParser, (req, res) => {
+        if (type == 'syscallListener') {
+
+        }
+    })
+
+    // app.get('/etc/file', (req, res) => {
+    //     let path = req.query.path;
+    //     if (path.includes('.css')) {
+    //         res.set({ 'Content-Type': 'text/css' })
+    //     }
+    //     fs.readFile(`./etc/${path}`, (err, data) => {
+    //         if (!err) { res.send(data) } else { res.send('') }
+    //     })
+    // })
+
+    app.use('/etc/file', express.static('etc'))
+
+    app.get('/console', (req, res) => {
+        res.set({ 'Content-Type': 'text/html' })
+        fs.readFile(SYSCONFIG.console.app, (err, data) => {
+            if (!err) { res.send(data) } else { res.send('') }
+        })
+    })
+
+    app.get('/wm', (req, res) => {
+        res.set({ 'Content-Type': 'text/html' })
+        fs.readFile(SYSCONFIG.display.wm, (err, data) => {
+            if (!err) { res.send(data) } else { res.send('') }
+        })
+    })
+
+    app.get('/dm', (req, res) => {
+        res.set({ 'Content-Type': 'text/html' })
+        fs.readFile(SYSCONFIG.display.dm, (err, data) => {
+            if (!err) { res.send(data) } else { res.send('') }
+        })
+    })
+
+    app.get('/run/:path', (req, res) => {
         res.send('')
     })
 

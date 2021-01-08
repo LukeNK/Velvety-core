@@ -1,0 +1,15 @@
+{
+    "name": "font.comfortaa",
+    "version": "1.0.0",
+    "description": "Comfortaa font",
+    "main": "https://fonts.googleapis.com/css2?family=Comfortaa&display=swap",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/googlefonts/comfortaa.git"
+    },
+    "author": "",
+    "license": "OFL-1.1"
+}

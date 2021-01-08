@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Desktop Manager</title>
+
+    <script src="/lib/sys.fs.js"></script>
+
+    <link rel="stylesheet" href="/etc/file/appearance/color-palette.css" type="text/css">
+    <link rel="stylesheet" href="/etc/file/appearance/elements.css" type="text/css">
+    <link href="/lib/font.comfortaa" rel="stylesheet">
+
+    <style>
+        body {
+            color: var(--text-color);
+            background-color: var(--background-color);
+            font-family: 'Comfortaa';
+        }
+        
+        a,
+        a:visited {
+            text-decoration: none;
+            color: var(--text-color);
+            background-color: var(--primary-1);
+            padding: 5px 10px;
+            transition: all 0.4s;
+        }
+        
+        a:hover {
+            background-color: var(--primary-2);
+        }
+        
+        .loginForm {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/wm" style="margin-top: 20px;">Default Pilot Window Manager</a><br><br>
+    <a href="/console">Default Console</a>
+    <div class="loginForm">
+        <p>Login</p>
+        <input type="text" placeholder="Username" id="loginFormUser" autofocus/>
+        <input type="text" placeholder="Password" id="loginFormPass">
+        <button id="loginButton" onclick="login()">Login</button>
+    </div>
+</body>
+
+</html>

@@ -54,4 +54,10 @@ appFS.close()
 Write data to path, can be use async (which `callback(error)`) or sync (return error)
 
 ### fs.readFile(lock, path, callback)
-Read data from pathl. Callback return (`error`, `data`). Synced function will return `data` if there's no `error`, and reverse; `error` will have first four characters as `-err`, you can check the string before use.
+Read data from path. Callback return (`error`, `data`). Synced function will return `data` if there's no `error`, and reverse; `error` will have first four characters as `-err`, you can check the string before use.
+
+### fs.syscallListener(lock, path, callback) 
+Every syscall in Velvety will be a link that only send response back when there're a syscall (which will be cover as a file). This method will listen to that call. Some syscall can also be evoke by app. \
+Callback and synced function will return string of `arguments`. \
+We suggest to avoid using synced function on this method, since this will hang your application until the system call your app. \
+Please refer to [Table-of-syscall](#appendix-1-Table-of-syscall) for list of syscall and its' arguments.

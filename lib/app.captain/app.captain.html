@@ -72,8 +72,12 @@
 
     function outText(text) {
         // Output stream
-        let newP = document.getElementById('mainScreen').appendChild(document.createElement('p'))
-        newP.textContent = text;
+        text.replace(new RegExp('\r\n', 'g'), '\n');
+        text = text.split('\n');
+        for (let l1 = 0; l1 < text.length; l1++) {
+            let newP = document.getElementById('mainScreen').appendChild(document.createElement('p'))
+            newP.textContent = text[l1];
+        }
     }
 
     function runCMD() {
@@ -108,6 +112,7 @@
             newInput.setAttribute("id", 'inputBox' + (lineCount));
             newInput.classList.add("inputBox")
             newInput.autofocus = true;
+            newInput.autocomplete = 'off'
             newInput.setAttribute("onkeydown", "runCMD()");
             (lineCount == 1) ? newInput.placeholder = 'Password': {};
             newInput.focus();
@@ -120,8 +125,10 @@
     function interpreterCMD(cmd) {
         cmd = cmd.split(' ')
         if (cmd[0] == 'wm') {
-            window.location.replace(`/lib/wm.${cmd[1]}`)
-        }
+            (cmd[1]) ? window.location.replace(`/lib/wm.${cmd[1]}`): window.location.replace(`/wm`)
+        } else if (cmd[0] == 'print-system-log') {
+            outText(appFS.readFile(appAuth[2], './var/session/log'))
+        } else outText(cmd[0] + ' is not defined')
     }
 </script>
 

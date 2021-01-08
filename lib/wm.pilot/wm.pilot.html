@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>Web Fancy</title>
     <link rel="stylesheet" href="/lib/file/wm.pilot/style.css" type="text/css">
+    <link rel="stylesheet" href="/etc/file/appearance/color-palette.css" type="text/css">
+    <link rel="stylesheet" href="/etc/file/appearance/elements.css" type="text/css">
 
     <script src="/lib/sys.fs.js"></script>
 </head>
@@ -15,14 +17,17 @@
     </div>
 
     <div id="desktop">
+        <iframe src="/lib/test.hello-world"></iframe>
     </div>
 
     <footer id="menu" onmouseenter="bottomTrigger()" onmouseleave="bottomClose()">
         <button id="menuSideTrigger" onmouseover="menuSideTrigger()"></button>
         <div id="menuContents">
             <div id="leftMenu">
+                <p>Hello world</p>
             </div>
             <div id="rightMenu">
+                <p>Hello user</p>
             </div>
         </div>
     </footer>
@@ -30,7 +35,7 @@
 
 <div id="lockScreen">
     <!--login form-->
-    <input type="text" placeholder="Username" id="loginFormUser" autofocus/>
+    <input type="text" placeholder="Username" id="loginFormUser" style="margin-top: 10%;" autofocus/>
     <input type="text" placeholder="Password" id="loginFormPass">
     <button id="loginButton" onclick="login()">Login</button>
 </div>

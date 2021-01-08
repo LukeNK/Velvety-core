@@ -1,0 +1,15 @@
+input {
+    border: none;
+    border-radius: 0px;
+    outline: none;
+}
+
+button {
+    border: none;
+    border-radius: 0px;
+    outline: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}

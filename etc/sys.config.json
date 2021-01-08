@@ -5,8 +5,9 @@
     },
     "display": {
         "wm": "./lib/wm.pilot/wm.pilot.html",
-        "dm": "",
-        "root": ""
+        "dm": "./lib/dm.controller/dm.controller.html",
+        "root": "./lib/dm.controller/wm.pilot.html",
+        "note": "root should be dm so people can select their desktop name, but now the function is not built yet, so root currently connect straight to wm"
     },
     "serverjs": {
         "port": 3000
